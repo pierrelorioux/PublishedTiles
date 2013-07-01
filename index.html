@@ -1,0 +1,63 @@
+
+<html xmlns="http://www.w3.org/1999/xhtml"><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+</head>
+    <style type="text/css">
+        body { margin: 0px; padding: 0px }
+        #map { width: 100%; height: 100%; border: 0px; }
+        div#keys { position: absolute; z-index:100; margin-left: 100px; }
+        #legend { display: none }
+        div#keys span:hover + div#legend, #legend:hover { display: block }
+        div.wax-tooltip { position: absolute; z-index:101; background:#fff; left: 50%; }
+        #keys, div.wax-tooltip {
+            background-color: rgba(255, 255, 255, 0.7);
+            box-shadow: 0 0 7px #CCCCCC;
+            color: #333333;
+            font: 14px/1.5 "Helvetica Neue",Arial,Helvetica,sans-serif;
+            padding: 0 5px;
+        }
+    </style>
+    <link rel="stylesheet" href="http://carte-libre.fr/map/mbtiles-server-php-demo/leaflet/leaflet.css" />
+    <!--[if lte IE 8]><link rel="stylesheet" href="<path_to_dist>/leaflet.ie.css" /><![endif]-->
+    <script src="http://carte-libre.fr/map/mbtiles-server-php-demo/leaflet/leaflet.js"></script>
+    <script src="http://carte-libre.fr/map/mbtiles-server-php-demo/wax.leaf.min.js"></script>
+</head>
+<body>
+    <div id="keys">
+        <span>Keys</span>
+        <div id="legend"></div>
+    </div>
+    <div id="map"></div>
+    <script>
+    wax.tilejson(
+        'mbtiles-server.php?db=map.mbtiles',
+        function(tilejson) {
+
+            /*var omq = new L.TileLayer(
+                'http://otile2.mqcdn.com/tiles/1.0.0/osm/{z}/{x}/{y}.png', {
+                    maxZoom: 14,
+                    attribution: 'OpenStreetMap - MapQuest',
+                    opacity: 0.4,
+            });*/
+
+            var power = new L.TileLayer(
+                "mbtiles-server.php?db=map.mbtiles&z={z}&x={x}&y={y}", {
+                    maxZoom: 14,
+                    attribution: 'OpenStreetMap - CL 2012-02-05',
+            });
+
+            var map = new L.Map('map', {
+                center: new L.LatLng(46, 0),
+                zoom: 2,
+  			layers: [ power]
+                //layers: [omq, power]
+            });
+
+            map.addControl( new L.Control.Layers({ "Power": power }));
+
+            wax.leaf.interaction(map, tilejson);
+            //document.getElementById("legend").innerHTML = tilejson.legend;
+    });
+    </script>
+</body>
+</html>
